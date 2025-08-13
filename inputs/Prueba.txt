@@ -1,6 +1,19 @@
-12
-123
-+
-+
-++
-1243
+<AFD Nombre="AFD_1">
+    N = {S, A, B, C}; // Estados
+    T = {0, 1};       // Alfabeto
+    I = {S};          // Estado Inicial
+    A = {B, C};       // Estados de Aceptación
+Transiciones:
+    C -> 1, A;
+    S -> 1, A ;
+    S -> 0, B ;
+    A -> 1, A ;
+    A -> 0, B ;
+    B -> 0, C ;
+    B -> 1, A ;
+</AFD>
+
+verAutomatas();
+desc(AFD_1);
+AFD_1("110");
+AP_1("aabb");

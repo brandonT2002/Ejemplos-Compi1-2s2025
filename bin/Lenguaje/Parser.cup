@@ -10,14 +10,68 @@ parser code
 :}
 
 // === terminales
-terminal String TK_suma, TK_numero;
+terminal String TK_numero, TK_id, TK_cadena, TK_asignacion, TK_llave_izquierda, TK_llave_derecha, TK_transicion, TK_menor_que, TK_mayor_que, TK_coma, TK_punto_y_coma, TK_pipe, TK_flecha, TK_dos_puntos, TK_division, TK_afd, TK_nombre, TK_verAutomatas, TK_desc, TK_parentesis_izquierdo, TK_parentesis_derecho;
 
 // === no terminales ===
 non terminal String INICIO;
+non terminal String INSTRUCCIONES;
+non terminal String INSTRUCCION;
+non terminal String AFD;
+non terminal String CUERPO_AFD;
+non terminal String APERTURA_AFD;
+non terminal String CIERRE_AFD;
+non terminal String REGLAS;
+non terminal String REGLA;
+non terminal String ELEMENTOS;
+non terminal String ELEMENTO;
+non terminal String TRANSICIONES;
+non terminal String TRANSICION;
+non terminal String FUNCIONES;
+non terminal String FUNCION;
 
 // === presedencia de operadores ===
 
 // === Gramatica ===
 start with INICIO;
 
-INICIO ::= TK_numero ;
+// INICIO DE LA GRAMATICA
+INICIO ::= INSTRUCCIONES ;
+
+INSTRUCCIONES ::= INSTRUCCIONES INSTRUCCION |
+                    INSTRUCCION               ;
+
+INSTRUCCION  ::= AFD |
+                FUNCION ;
+
+// DELCARACIÓN DE AFD
+AFD ::= APERTURA_AFD CUERPO_AFD CIERRE_AFD;
+
+APERTURA_AFD ::= TK_menor_que TK_afd TK_nombre TK_asignacion TK_cadena TK_mayor_que;
+CIERRE_AFD ::= TK_menor_que TK_division TK_afd TK_mayor_que;
+
+CUERPO_AFD ::= REGLAS TK_transicion TK_dos_puntos TRANSICIONES ;
+
+// REGLAS (Estados, alfabeto, estado inicial, estados de aceptación)
+REGLAS ::= REGLAS REGLA |
+            REGLA       ;
+
+REGLA ::= TK_id TK_asignacion TK_llave_izquierda ELEMENTOS TK_llave_derecha TK_punto_y_coma ;
+
+ELEMENTOS ::= ELEMENTOS TK_coma ELEMENTO |
+            ELEMENTO                     ;
+
+// TRANSICIONES
+TRANSICIONES ::= TRANSICIONES TRANSICION |
+                TRANSICION               ;
+
+TRANSICION ::= TK_id TK_flecha ELEMENTO TK_coma TK_id TK_punto_y_coma ;
+
+// ELEMENTOS
+ELEMENTO ::= TK_id    |
+            TK_numero ;
+
+// FUNCIONES DEL SISTEMA
+
+FUNCION ::= TK_verAutomatas TK_parentesis_izquierdo TK_parentesis_derecho TK_punto_y_coma |
+            TK_desc TK_parentesis_izquierdo TK_id TK_parentesis_derecho TK_punto_y_coma   |
+            TK_id TK_parentesis_izquierdo TK_cadena TK_parentesis_derecho TK_punto_y_coma ;

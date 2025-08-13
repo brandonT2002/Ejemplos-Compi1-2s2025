@@ -8,15 +8,53 @@ package Lenguaje;
 /** CUP generated class containing symbol constants. */
 public class Terminal {
   /* terminals */
-  public static final int error = 1;
-  public static final int TK_numero = 3;
-  public static final int TK_suma = 2;
+  public static final int TK_desc = 20;
+  public static final int TK_transicion = 8;
+  public static final int TK_id = 3;
+  public static final int TK_llave_derecha = 7;
+  public static final int TK_division = 16;
+  public static final int TK_parentesis_izquierdo = 21;
+  public static final int TK_coma = 11;
+  public static final int TK_verAutomatas = 19;
   public static final int EOF = 0;
+  public static final int TK_asignacion = 5;
+  public static final int TK_menor_que = 9;
+  public static final int TK_dos_puntos = 15;
+  public static final int error = 1;
+  public static final int TK_punto_y_coma = 12;
+  public static final int TK_nombre = 18;
+  public static final int TK_cadena = 4;
+  public static final int TK_afd = 17;
+  public static final int TK_llave_izquierda = 6;
+  public static final int TK_parentesis_derecho = 22;
+  public static final int TK_mayor_que = 10;
+  public static final int TK_numero = 2;
+  public static final int TK_flecha = 14;
+  public static final int TK_pipe = 13;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
-  "TK_suma",
-  "TK_numero"
+  "TK_numero",
+  "TK_id",
+  "TK_cadena",
+  "TK_asignacion",
+  "TK_llave_izquierda",
+  "TK_llave_derecha",
+  "TK_transicion",
+  "TK_menor_que",
+  "TK_mayor_que",
+  "TK_coma",
+  "TK_punto_y_coma",
+  "TK_pipe",
+  "TK_flecha",
+  "TK_dos_puntos",
+  "TK_division",
+  "TK_afd",
+  "TK_nombre",
+  "TK_verAutomatas",
+  "TK_desc",
+  "TK_parentesis_izquierdo",
+  "TK_parentesis_derecho"
   };
 }
 
