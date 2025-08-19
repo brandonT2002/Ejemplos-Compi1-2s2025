@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import Clases.Errores.ErrorSintactico;
 
-import Clases.Instruccion.Instruccion;
-import Clases.Instruccion.GuardarAutomata;
+import Clases.Abstractas.Instruccion;
+import Clases.Instrucciones.GuardarAutomata;
 
 // === configuración ===
 parser code
@@ -28,7 +28,7 @@ parser code
 terminal String TK_numero, TK_id, TK_cadena, TK_asignacion, TK_llave_izquierda, TK_llave_derecha, TK_transicion, TK_menor_que, TK_mayor_que, TK_coma, TK_punto_y_coma, TK_pipe, TK_flecha, TK_dos_puntos, TK_division, TK_afd, TK_nombre, TK_verAutomatas, TK_desc, TK_parentesis_izquierdo, TK_parentesis_derecho;
 
 // === no terminales ===
-non terminal String INICIO;
+non terminal INICIO;
 non terminal ArrayList<Instruccion> INSTRUCCIONES;
 non terminal Instruccion INSTRUCCION;
 non terminal GuardarAutomata AFD;

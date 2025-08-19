@@ -13,6 +13,8 @@ Transiciones:
     B -> 1, A ;
 </AFD>
 
+/*
 verAutomatas();
 desc(AFD_1);
 AFD_1("110");
+*/

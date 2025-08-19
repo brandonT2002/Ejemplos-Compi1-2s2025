@@ -9,8 +9,8 @@ import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import Clases.Errores.ErrorSintactico;
-import Clases.Instruccion.Instruccion;
-import Clases.Instruccion.GuardarAutomata;
+import Clases.Abstractas.Instruccion;
+import Clases.Instrucciones.GuardarAutomata;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -202,7 +202,7 @@ class CUP$Parser$actions {
               Object RESULT =null;
 		int start_valleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).left;
 		int start_valright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).right;
-		String start_val = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
+		Object start_val = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		RESULT = start_val;
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("$START",0, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -213,7 +213,7 @@ class CUP$Parser$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 1: // INICIO ::= INSTRUCCIONES 
             {
-              String RESULT =null;
+              Object RESULT =null;
 		int listaleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int listaright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		ArrayList<Instruccion> lista = (ArrayList<Instruccion>)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;

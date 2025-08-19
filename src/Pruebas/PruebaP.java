@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 
+import Clases.Abstractas.Instruccion;
 import Lenguaje.Parser;
 import Lenguaje.Scanner;
 
@@ -19,11 +20,10 @@ public class PruebaP {
             );
             Parser parser = new Parser(scanner);
             parser.parse();
-            System.out.println("Análisis Sintáctico Exitoso.");
-            for (int i = 0; i < parser.instrucciones.size(); i++) {
-                System.out.println("Instrucción " + (i + 1) + ": " + parser.instrucciones.get(i));
+            for (Instruccion instruccion : parser.instrucciones) {
+                System.out.println("Instrucción: " + instruccion);
             }
-            System.out.println("Errores Léxicos:");
+            System.out.println("Errores Sintácticos:");
             for (int i = 0; i < parser.erroresSintacticos.size(); i++) {
                 System.out.println(parser.erroresSintacticos.get(i));
             }
