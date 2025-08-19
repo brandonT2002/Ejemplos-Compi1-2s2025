@@ -8,7 +8,7 @@ import java.io.StringReader;
 import Lenguaje.Parser;
 import Lenguaje.Scanner;
 
-public class PruebaT {
+public class PruebaP {
     public static void main(String[] args) throws Exception {
         try {
             String input = readInput("./inputs/Prueba.txt");
@@ -19,6 +19,14 @@ public class PruebaT {
             );
             Parser parser = new Parser(scanner);
             parser.parse();
+            System.out.println("Análisis Sintáctico Exitoso.");
+            for (int i = 0; i < parser.instrucciones.size(); i++) {
+                System.out.println("Instrucción " + (i + 1) + ": " + parser.instrucciones.get(i));
+            }
+            System.out.println("Errores Léxicos:");
+            for (int i = 0; i < parser.erroresSintacticos.size(); i++) {
+                System.out.println(parser.erroresSintacticos.get(i));
+            }
         }
         catch(Exception e) {
             System.out.println(e);

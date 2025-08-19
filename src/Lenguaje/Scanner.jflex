@@ -1,13 +1,23 @@
-// === 1. PACKAGE E IMPORTS
+// === 1. PACKAGE E IMPORTS ===
 package Lenguaje;
 import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+import Clases.Errores.ErrorLexico;
 
 %%
 
-// === 2. CONFIGURACIONES PARA EL ANALISIS
+// === 2. CONFIGURACIONES PARA EL ANALISIS ===
 %{
     // Código Java
     // Crear listas
+    ArrayList<ErrorLexico> listaErrores = new ArrayList<>();
+
+    public void agregarError(int linea, int columna, String lexema) {
+        listaErrores.add(new ErrorLexico(linea, columna, lexema));
+    }
+    public ArrayList<ErrorLexico> getListaErrores() {
+        return listaErrores;
+    }
 %}
 
 // === DIRECTIVAS
@@ -73,3 +83,4 @@ COMMENTM = [/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]
 {COMMENTS}                   {}
 {COMMENTM}                   {}
 \n                           {yychar = 1;}
+.                            {agregarError(yyline, yychar, yytext());}

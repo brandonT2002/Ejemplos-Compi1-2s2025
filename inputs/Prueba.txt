@@ -4,7 +4,7 @@
     I = {S};          // Estado Inicial
     A = {B, C};       // Estados de Aceptación
 Transiciones:
-    C -> 1, A;
+    C -> 1, A ;
     S -> 1, A ;
     S -> 0, B ;
     A -> 1, A ;
@@ -16,4 +16,3 @@ Transiciones:
 verAutomatas();
 desc(AFD_1);
 AFD_1("110");
-AP_1("aabb");

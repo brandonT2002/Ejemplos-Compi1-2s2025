@@ -23,6 +23,10 @@ public class PruebaS {
                 token = scanner.next_token();
                 System.out.println(token.value + " ".repeat(35 - String.valueOf(token.value).length()) + token.left + " ".repeat(6 - String.valueOf(token.left).length()) + token.right + " ".repeat(8 - String.valueOf(token.right).length()) + Lenguaje.Terminal.terminalNames[token.sym]);
             } while(token.value != null);
+            System.out.println("\n\nErrores Lexicos:");
+            for (int i = 0; i < scanner.getListaErrores().size(); i++) {
+                System.out.println(scanner.getListaErrores().get(i).toString());
+            }
         }
         catch(Exception e) {
             System.out.println(e);

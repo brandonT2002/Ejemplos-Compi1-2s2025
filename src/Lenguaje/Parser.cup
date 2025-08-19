@@ -1,12 +1,27 @@
 // === 1. Package e imports ===
 package Lenguaje;
 import java_cup.runtime.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import Clases.Errores.ErrorSintactico;
+
+import Clases.Instruccion.Instruccion;
+import Clases.Instruccion.GuardarAutomata;
 
 // === configuración ===
 parser code
 {:
     // Código Java
     // Lista errores sintácticos
+    public ArrayList<ErrorSintactico> erroresSintacticos = new ArrayList<>();
+    public void syntax_error(Symbol sym) {
+        erroresSintacticos.add(new ErrorSintactico(sym.left,sym.right,sym.value,Terminal.terminalNames[sym.sym]));
+    }
+    public void unrecovered_syntax_error(Symbol sym) throws java.lang.Exception {
+        erroresSintacticos.add(new ErrorSintactico("Error Sintáctico sin recuperar."));
+    }
+
+    public static ArrayList<Instruccion> instrucciones;
 :}
 
 // === terminales
@@ -14,9 +29,9 @@ terminal String TK_numero, TK_id, TK_cadena, TK_asignacion, TK_llave_izquierda, 
 
 // === no terminales ===
 non terminal String INICIO;
-non terminal String INSTRUCCIONES;
-non terminal String INSTRUCCION;
-non terminal String AFD;
+non terminal ArrayList<Instruccion> INSTRUCCIONES;
+non terminal Instruccion INSTRUCCION;
+non terminal GuardarAutomata AFD;
 non terminal String CUERPO_AFD;
 non terminal String APERTURA_AFD;
 non terminal String CIERRE_AFD;
@@ -35,18 +50,19 @@ non terminal String FUNCION;
 start with INICIO;
 
 // INICIO DE LA GRAMATICA
-INICIO ::= INSTRUCCIONES ;
+INICIO ::= INSTRUCCIONES:lista {: instrucciones = lista; :} ;
 
-INSTRUCCIONES ::= INSTRUCCIONES INSTRUCCION |
-                    INSTRUCCION               ;
+INSTRUCCIONES ::= INSTRUCCIONES :lista INSTRUCCION :instruccion {: RESULT = lista; RESULT.add(instruccion); :} |
+                INSTRUCCION :instruccion                 {: RESULT = new ArrayList<>(Arrays.asList(instruccion)); :} ;
 
-INSTRUCCION  ::= AFD |
-                FUNCION ;
+INSTRUCCION  ::= AFD :afd {: RESULT = afd; :} |
+                FUNCION |
+                error ;
 
 // DELCARACIÓN DE AFD
-AFD ::= APERTURA_AFD CUERPO_AFD CIERRE_AFD;
+AFD ::= APERTURA_AFD :afd CUERPO_AFD CIERRE_AFD {: RESULT = new GuardarAutomata(afd); :};
 
-APERTURA_AFD ::= TK_menor_que TK_afd TK_nombre TK_asignacion TK_cadena TK_mayor_que;
+APERTURA_AFD ::= TK_menor_que TK_afd TK_nombre TK_asignacion TK_cadena :nombreAFD TK_mayor_que {: RESULT = nombreAFD; :};
 CIERRE_AFD ::= TK_menor_que TK_division TK_afd TK_mayor_que;
 
 CUERPO_AFD ::= REGLAS TK_transicion TK_dos_puntos TRANSICIONES ;
