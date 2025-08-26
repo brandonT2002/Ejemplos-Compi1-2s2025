@@ -7,6 +7,12 @@ import Clases.Errores.ErrorSintactico;
 
 import Clases.Abstractas.Instruccion;
 import Clases.Instrucciones.GuardarAutomata;
+import Clases.Instrucciones.verAutomatas;
+import Clases.Instrucciones.Descripcion;
+
+import Clases.Objetos.Regla;
+import Clases.Objetos.Transicion;
+import Clases.Objetos.CuerpoAFD;
 
 // === configuración ===
 parser code
@@ -32,17 +38,17 @@ non terminal INICIO;
 non terminal ArrayList<Instruccion> INSTRUCCIONES;
 non terminal Instruccion INSTRUCCION;
 non terminal GuardarAutomata AFD;
-non terminal String CUERPO_AFD;
+non terminal CuerpoAFD CUERPO_AFD;
 non terminal String APERTURA_AFD;
 non terminal String CIERRE_AFD;
-non terminal String REGLAS;
-non terminal String REGLA;
-non terminal String ELEMENTOS;
+non terminal ArrayList<Regla> REGLAS;
+non terminal Regla REGLA;
+non terminal ArrayList<String> ELEMENTOS;
 non terminal String ELEMENTO;
-non terminal String TRANSICIONES;
-non terminal String TRANSICION;
-non terminal String FUNCIONES;
-non terminal String FUNCION;
+non terminal ArrayList<Transicion> TRANSICIONES;
+non terminal Transicion TRANSICION;
+non terminal verAutomatas VER_AUTOMATA;
+non terminal Descripcion DESCRIPCION_ATM;
 
 // === presedencia de operadores ===
 
@@ -56,38 +62,47 @@ INSTRUCCIONES ::= INSTRUCCIONES :lista INSTRUCCION :instruccion {: RESULT = list
                 INSTRUCCION :instruccion                 {: RESULT = new ArrayList<>(Arrays.asList(instruccion)); :} ;
 
 INSTRUCCION  ::= AFD :afd {: RESULT = afd; :} |
-                FUNCION |
+                VER_AUTOMATA :funcion {: RESULT = funcion; :} |
+                DESCRIPCION_ATM :descripcion {: RESULT = descripcion; :} |
                 error ;
 
 // DELCARACIÓN DE AFD
-AFD ::= APERTURA_AFD :afd CUERPO_AFD CIERRE_AFD {: RESULT = new GuardarAutomata(afd); :};
+AFD ::= APERTURA_AFD :nombre CUERPO_AFD :cuerpo CIERRE_AFD {: RESULT = new GuardarAutomata(nombre, "AFD", cuerpo); :};
 
 APERTURA_AFD ::= TK_menor_que TK_afd TK_nombre TK_asignacion TK_cadena :nombreAFD TK_mayor_que {: RESULT = nombreAFD; :};
 CIERRE_AFD ::= TK_menor_que TK_division TK_afd TK_mayor_que;
 
-CUERPO_AFD ::= REGLAS TK_transicion TK_dos_puntos TRANSICIONES ;
+CUERPO_AFD ::= REGLAS :reglas TK_transicion TK_dos_puntos TRANSICIONES :transiciones {: RESULT = new CuerpoAFD(reglas, transiciones); :} ;
 
 // REGLAS (Estados, alfabeto, estado inicial, estados de aceptación)
-REGLAS ::= REGLAS REGLA |
-            REGLA       ;
+REGLAS ::= REGLAS :lista REGLA :regla {:RESULT = lista; lista.add(regla); :} |
+            REGLA :regla       {: RESULT = new ArrayList<>(Arrays.asList(regla)); :} ;
 
-REGLA ::= TK_id TK_asignacion TK_llave_izquierda ELEMENTOS TK_llave_derecha TK_punto_y_coma ;
+REGLA ::= TK_id :id TK_asignacion TK_llave_izquierda ELEMENTOS :elementos TK_llave_derecha TK_punto_y_coma {: RESULT = new Regla(id, elementos); :} ;
 
-ELEMENTOS ::= ELEMENTOS TK_coma ELEMENTO |
-            ELEMENTO                     ;
+ELEMENTOS ::= ELEMENTOS :lista TK_coma ELEMENTO :elemento {: RESULT = lista; RESULT.add(elemento); :} |
+            ELEMENTO :elemento                            {: RESULT = new ArrayList<>(Arrays.asList(elemento)); :} ;
 
 // TRANSICIONES
-TRANSICIONES ::= TRANSICIONES TRANSICION |
-                TRANSICION               ;
+TRANSICIONES ::= TRANSICIONES :lista TRANSICION :transicion {: RESULT = lista; RESULT.add(transicion); :} |
+                TRANSICION :transicion                      {: RESULT = new ArrayList<>(Arrays.asList(transicion)); :} ;
 
-TRANSICION ::= TK_id TK_flecha ELEMENTO TK_coma TK_id TK_punto_y_coma ;
+TRANSICION ::= TK_id :origen TK_flecha ELEMENTO :simbolo TK_coma TK_id :destino TK_punto_y_coma
+            {:
+                Transicion transicion = new Transicion(origen);
+                transicion.agregarTransicion(simbolo, destino);
+                RESULT = transicion;
+            :} ;
 
 // ELEMENTOS
-ELEMENTO ::= TK_id    |
-            TK_numero ;
+ELEMENTO ::= TK_id    :elemento {: RESULT = elemento; :} |
+            TK_numero :elemento {: RESULT = elemento; :} ;
 
 // FUNCIONES DEL SISTEMA
 
-FUNCION ::= TK_verAutomatas TK_parentesis_izquierdo TK_parentesis_derecho TK_punto_y_coma |
-            TK_desc TK_parentesis_izquierdo TK_id TK_parentesis_derecho TK_punto_y_coma   |
+VER_AUTOMATA ::= TK_verAutomatas TK_parentesis_izquierdo TK_parentesis_derecho TK_punto_y_coma {: RESULT = new verAutomatas(); :} ;
+DESCRIPCION_ATM ::= TK_desc TK_parentesis_izquierdo TK_id :id TK_parentesis_derecho TK_punto_y_coma {: RESULT = new Descripcion(id); :} ;
+/*
+TK_desc TK_parentesis_izquierdo TK_id TK_parentesis_derecho TK_punto_y_coma   |
             TK_id TK_parentesis_izquierdo TK_cadena TK_parentesis_derecho TK_punto_y_coma ;
+*/

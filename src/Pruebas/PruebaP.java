@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 
 import Clases.Abstractas.Instruccion;
+import Clases.Entorno.Entorno;
 import Lenguaje.Parser;
 import Lenguaje.Scanner;
 
@@ -20,9 +21,20 @@ public class PruebaP {
             );
             Parser parser = new Parser(scanner);
             parser.parse();
+            Entorno global = new Entorno("global");
+            String salida_ = "";
             for (Instruccion instruccion : parser.instrucciones) {
-                System.out.println("Instrucción: " + instruccion);
+                try {
+                    instruccion.ejecutar(global);
+                    for (String salida : Clases.Utilidades.Salidas.salidaConsola) {
+                        salida_ += salida + "\n";
+                    }
+                    Clases.Utilidades.Salidas.salidaConsola.clear();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             }
+            System.out.println(salida_);
             System.out.println("Errores Sintácticos:");
             for (int i = 0; i < parser.erroresSintacticos.size(); i++) {
                 System.out.println(parser.erroresSintacticos.get(i));
