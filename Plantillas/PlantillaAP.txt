@@ -1,0 +1,37 @@
+digraph AP {
+    rankdir=LR;
+    node [shape=circle, fontsize=12, fontname="Helvetica"];
+
+    // Nodos de autómata
+    I [shape=circle, style=filled, fillcolor=lightgreen, label="I"];
+    A [shape=circle, label="A"];
+    B [shape=circle, label="B"];
+    C [shape=circle, label="C"];
+    F [shape=doublecircle, label="F"];
+
+    // Transiciones
+    I -> A [label="ε, $, #"];
+    A -> B [label="a, $, a"];
+    B -> B [label="a, S, a"];
+    B -> C [label="b, a, S"];
+    C -> C [label="b, a, S"];
+    C -> F [label="ε, #, S"];
+
+    // Tablas Entrada y Pila
+    Entrada [shape=none, margin=0, label=<
+        <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0">
+            <TR><TD><B>Entrada</B></TD></TR>
+            <TR><TD WIDTH="80" HEIGHT="40"></TD></TR>
+        </TABLE>
+    >];
+
+    Pila [shape=none, margin=0, label=<
+        <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0">
+            <TR><TD><B>Pila</B></TD></TR>
+            <TR><TD WIDTH="80" HEIGHT="40"></TD></TR>
+        </TABLE>
+    >];
+
+    {rank=source; Entrada; Pila;}
+}
+

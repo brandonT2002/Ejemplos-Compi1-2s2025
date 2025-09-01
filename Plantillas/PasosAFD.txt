@@ -1,0 +1,25 @@
+digraph AFD_1 {
+    rankdir=LR;
+    size="8,5";
+
+    labelloc="t";
+    label="AFD_1\n\nCadena Evaluada: 00100";
+    fontsize=20;
+
+    node [shape = circle, fontsize=16];
+    inicio [shape=point, style=invis];
+    inicio -> S0;
+    S0 [label="S"];
+    B1 [label="B", shape=doublecircle];
+    C2 [label="C", shape=doublecircle];
+    A3 [label="A", shape=circle];
+    B4 [label="B", shape=doublecircle];
+    C5 [label="C", shape=doublecircle];
+
+    // Transiciones segun la secuencia
+    S0 -> B1 [label="0"];
+    B1 -> C2 [label="0"];
+    C2 -> A3 [label="1"];
+    A3 -> B4 [label="0"];
+    B4 -> C5 [label="0"];
+}
