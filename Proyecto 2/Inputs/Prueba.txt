@@ -1,1 +1,10 @@
-!(9 < 15 && 10 >= (5 * 2))
+entero edad = (15 + 15) * 2;
+imprimir(edad);
+
+if (edad < 15) {
+    imprimir("Niño");
+} else if (edad >= 15 && edad <= 18) {
+    imprimir("Joven");
+} else {
+    imprimir("HOla");
+}
