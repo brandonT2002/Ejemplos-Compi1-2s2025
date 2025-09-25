@@ -1,0 +1,76 @@
+<AFD Nombre="AFD_4">
+N = {A, B, C, D}; 
+T = {x, y}; 
+I = {A}; 
+A = {D}; 
+Transiciones:
+A -> x, B | y, A ;
+B -> x, C | y, A ;
+C -> x, D | y, B ;
+D -> x, D | y, D ;
+</AFD>
+
+<AFD Nombre="AFD_5">
+N = {s0, s1, s2, s3}; 
+T = {0, 1}; 
+I = {s0}; 
+A = {s3}; 
+Transiciones:
+s0 -> 0, s1 | 1, s2 ;
+s1 -> 0, s1 | 1, s3 ;
+s2 -> 0, s3 | 1, s2 ;
+s3 -> 0, s3 | 1, s3 ;
+</AFD>
+
+<AFD Nombre="AFD_6">
+N = {p0, p1, p2, p3}; 
+T = {a, b}; 
+I = {p0}; 
+A = {p2, p3}; 
+Transiciones:
+p0 -> a, p1 | b, p0 ;
+p1 -> a, p2 | b, p1 ;
+p2 -> a, p3 | b, p2 ;
+p3 -> a, p3 | b, p3 ;
+</AFD>
+
+<AP Nombre="AP_3">
+N = {p0, p1, pf}; 
+T = {a, b}; 
+P = {a, #}; 
+I = {p0}; 
+A = {pf}; 
+Transiciones:
+p0 ($) -> ($), p1 : (#) ;
+p1 (a) -> ($), p1 : (a) ;
+p1 (b) -> (a), p1 : ($) | ($) -> (#), pf : ($) ;
+</AP>
+
+<AP Nombre="AP_4">
+N = {s, t, u, f}; 
+T = {0, 1}; 
+P = {0, 1, #}; 
+I = {s}; 
+A = {f}; 
+Transiciones:
+s ($) -> ($), t : (#) ;
+t (0) -> ($), t : (0) ;
+t (1) -> (0), u : ($) ;
+u (1) -> (0), u : ($) | ($) -> (#), f : ($) ;
+</AP>
+
+verAutomatas();
+desc(AFD_4);
+/*desc(AFD_5);
+desc(AFD_6);
+desc(AP_3);*/
+desc(AP_4);
+
+AFD_4("xxxxy");
+AFD_4("yxxy");
+AFD_5("1010");
+AFD_5("11");
+AFD_6("abbaaa");
+AFD_6("bab");
+AP_3("aaabb");
+AP_4("0011");

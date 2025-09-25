@@ -1,0 +1,95 @@
+<AFD Nombre="Alfabeticos"> 
+    N = {E0, E1, E2, E3, E4, E5, E6};
+    T = {a, b, c, d, h};
+    I = {E0};
+    A = {E4};
+Transiciones: 
+    E0 -> h, E1 | b, E2 | c, E3 | a, E4 ;
+    E1 -> b, E2 | c, E3 | a, E4 ;
+    E2 -> c, E4 ;
+    E3 -> d, E4 ;
+    E4 -> a, E4 | b, E5 | c, E6 ;
+    E5 -> c, E4 ;
+    E6 -> d, E4 ;
+</AFD>
+
+<AFD Nombre="Alfanumericos"> 
+    N = {S0, S1, S2, S3, S4, S5, S6, S7, S8};
+    T = {a, b, c, x, y, z, 0, 1};
+    I = {S0};
+    A = {S3, S6, S7};
+Transiciones: 
+    S0 -> a, S1 | x, S2 | 1, S3 | 0, S3;
+    S1 -> b, S4 | x, S2 ;
+    S2 -> y, S5 ;
+    S3 -> 0, S3 | 1, S3;
+    S4 -> c, S6 ;
+    S5 -> z, S7 ;
+    S6 -> a, S8 ;
+    S8 -> b, S4 ;
+</AFD>
+
+<AFD Nombre="Letras"> 
+    N = {E0, E1, E2, E3, E4, E6, E7};
+    T = {a, b, c};
+    I = {E0};
+    A = {E7};
+Transiciones: 
+    E0 -> a, E1 | b, E2 | c, E3 ;
+    E1 -> a, E1 | c, E4 ;
+    E2 -> b, E5 ;
+    E3 -> c, E3 | b, E6 ;
+    E4 -> b, E6 ;
+    E5 -> c, E4 ;
+    E6 -> a, E7 ;
+</AFD>
+
+<AP Nombre="AP_5">
+N = {i, q, r, f}; 
+T = {a, b}; 
+P = {a, b, #}; 
+I = {i}; 
+A = {f}; 
+Transiciones:
+i ($) -> ($), q : (#) ;
+q (a) -> ($), q : (a) ;
+q (b) -> (a), r : ($) ;
+r (b) -> (a), r : ($) | ($) -> (#), f : ($) ;
+</AP>
+
+<AP Nombre="AP_6">
+N = {q0, q1, q2, qf}; 
+T = {0, 1}; 
+P = {0, 1, #}; 
+I = {q0}; 
+A = {qf}; 
+Transiciones:
+q0 ($) -> ($), q1 : (#) ;
+q1 (0) -> ($), q1 : (0) ;
+q1 (1) -> (0), q2 : ($) ;
+q2 (1) -> (0), q2 : ($) | (0) -> (#), qf : ($) ;
+</AP>
+
+verAutomatas();
+desc(Alfabeticos);
+desc(Alfanumericos);
+desc(Letras);
+desc(AP_5);
+desc(AP_6);
+
+Alfabeticos("aa");
+Alfabeticos("abccd");
+Alfabeticos("hbcc");
+Alfabeticos("cdb");
+Alfanumericos("0000000")
+Alfanumericos("0000001")
+Alfanumericos("0000001b")
+Alfanumericos("abca")
+Alfanumericos("xy")
+Alfanumericos("axy")
+Letras("aaaaaaaa");
+Letras("bbbcba");
+Letras("cccccba");
+Letras("cba");
+AP_5("aabbb");
+AP_6("0011");
