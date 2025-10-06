@@ -1,6 +1,9 @@
 // Analizador léxico
 %{
     // Javascript
+    let { errores } = require ('../Clases/Utilidades/Salida');
+    const { Error } = require('../Clases/Utilidades/Error');
+    const { TipoError } = require('../Clases/Utilidades/TipoError');
 %}
 
 %lex
@@ -21,7 +24,9 @@ STRING      \"({CONTENT}*)\"
 // Reservadas
 "entero"                { return 'TK_entero'  }
 "double"                { return 'TK_double'  }
-"imprimir"              { return 'TK_imprimir' }
+"con"                   { return 'TK_con'     }
+"valor"                 { return 'TK_valor'   }
+"imprimir"              { return 'TK_imprimir'}
 "if"                    { return 'TK_if'      }
 "else"                  { return 'TK_else'    }
 // Valores
@@ -30,30 +35,37 @@ STRING      \"({CONTENT}*)\"
 {DOUBLE}                { return 'TK_double' }
 {INTEGER}               { return 'TK_int'    }
 // Símbolos
-'+'                     { return 'TK_mas'    }
-'-'                     { return 'TK_menos'  }
+'+'                     { return 'TK_mas'             }
+'-'                     { return 'TK_menos'           }
 '*'                     { return 'TK_multiplicacion'  }
-'/'                     { return 'TK_division'  }
-'=='                    { return 'TK_igualdad' }
-'='                     { return 'TK_asignacion' }
-'>='                    { return 'TK_mayorIgual' }
-'<='                    { return 'TK_menorIgual' }
-'>'                     { return 'TK_mayor' }
-'<'                     { return 'TK_menor' }
-'&&'                    { return 'TK_and' }
-'||'                    { return 'TK_or' }
-'!'                     { return 'TK_not' }
-'('                     { return 'TK_parAbre' }
-')'                     { return 'TK_parCierra' }
-'{'                     { return 'TK_llaveAbre' }
-'}'                     { return 'TK_llaveCierra' }
-';'                     { return 'TK_puntoComa' }
+'/'                     { return 'TK_division'        }
+'=='                    { return 'TK_igualdad'        }
+'='                     { return 'TK_asignacion'      }
+'>='                    { return 'TK_mayorIgual'      }
+'<='                    { return 'TK_menorIgual'      }
+'>'                     { return 'TK_mayor'           }
+'<'                     { return 'TK_menor'           }
+'&&'                    { return 'TK_and'             }
+'||'                    { return 'TK_or'              }
+'!'                     { return 'TK_not'             }
+'('                     { return 'TK_parAbre'         }
+')'                     { return 'TK_parCierra'       }
+'{'                     { return 'TK_llaveAbre'       }
+'}'                     { return 'TK_llaveCierra'     }
+';'                     { return 'TK_puntoComa'       }
+.                       { errores.push(new Error(yylloc.first_line, yylloc.first_column + 1, TipoError.LEXICO, `Caracter no reconocido «${yytext}»`)) }
 <<EOF>>                 { return 'EOF' }
 /lex
 // Analizador sintáctico
 
 %{
     // Javascript
+    // Tipos
+    const { Tipo } = require('../Clases/Utilidades/Tipo');
+    // Expresiones
+    const { Primitivo } = require('../Clases/Expresiones/Primitivo');
+    // Instrucciones
+    const { DeclaracionID } = require('../Clases/Instrucciones/DeclaracionID');
 %}
 
 // Precedencia de operadores
@@ -73,50 +85,49 @@ STRING      \"({CONTENT}*)\"
 INICIO : INSTRUCCIONES EOF {return $1} |
         EOF                {return []} ;
 
-INSTRUCCIONES : INSTRUCCIONES INSTRUCCION |
-                INSTRUCCION               ;
+INSTRUCCIONES : INSTRUCCIONES INSTRUCCION {$$.push($2)} |
+                INSTRUCCION               {$$ = [$1]  } ;
 
 INSTRUCCION :
-            DECLARACION_VAR |
-            CONDICIONAL_IF  |
-            IMPRIMIR ;
+            DECLARACION_VAR {$$ = $1} |
+            IMPRIMIR        |
+            error             {errores.push(new Error(this._$.first_line, this._$.first_column + 1, TipoError.SINTACTICO, `No se esperaba «${yytext}»`))} ;
 
 DECLARACION_VAR :
-            TK_entero TK_id TK_asignacion EXPRESION TK_puntoComa ;
+            TIPO TK_id TK_con TK_valor EXPRESION TK_puntoComa {$$ = new DeclaracionID(@1.first_line, @1.first_column, $2, $1, $5)} ;
 
 IMPRIMIR :
-            TK_imprimir TK_parAbre EXPRESION TK_parCierra TK_puntoComa ;
-
-CONDICIONAL_IF :
-            TK_if TK_parAbre EXPRESION TK_parCierra TK_llaveAbre INSTRUCCIONES TK_llaveCierra TK_else CONDICIONAL_IF |
-            TK_if TK_parAbre EXPRESION TK_parCierra TK_llaveAbre INSTRUCCIONES TK_llaveCierra TK_else TK_llaveAbre INSTRUCCIONES TK_llaveCierra |
-            TK_if TK_parAbre EXPRESION TK_parCierra TK_llaveAbre INSTRUCCIONES TK_llaveCierra ;
+            TK_imprimir EXPRESION TK_puntoComa ;
 
 EXPRESION : 
-            ARITMETICAS {$$ = $1}        |
-            RELACIONALES {$$ = $1}       |
-            LOGICAS {$$ = $1}            |
-            TK_parAbre EXPRESION TK_parCierra {$$ = $2} |
-            TK_int  {$$ = Number($1)}   |
-            TK_double {$$ = Number($1)} |
-            TK_id {$$ = $1}             |
-            TK_string {$$ = $1}         ;
+            ARITMETICOS  |
+            RELACIONALES |
+            LOGICOS      |
+            TK_parAbre EXPRESION TK_parCierra |
+            TK_id     {$$ = new Primitivo()} |
+            TK_int    {$$ = new Primitivo(@1.first_line, @1.first_column, $1, Tipo.ENTERO)} |
+            TK_double {$$ = new Primitivo(@1.first_line, @1.first_column, $1, Tipo.DOUBLE)} |
+            TK_string {$$ = new Primitivo(@1.first_line, @1.first_column, $1, Tipo.CADENA)} ;
 
-ARITMETICAS : 
-            EXPRESION TK_mas EXPRESION {$$ = $1 + $3} |
-            EXPRESION TK_menos EXPRESION {$$ = $1 - $3} |
-            EXPRESION TK_multiplicacion EXPRESION {$$ = $1 * $3} |
-            EXPRESION TK_division EXPRESION {$$ = $1 / $3};
-            // TK_menos EXPRESION %prec TK_negacionUnaria {$$ = Number($2)} ;
+ARITMETICOS : 
+            EXPRESION TK_mas EXPRESION |
+            EXPRESION TK_menos EXPRESION |
+            EXPRESION TK_multiplicacion EXPRESION |
+            EXPRESION TK_division EXPRESION ;
 
 RELACIONALES :
-            EXPRESION TK_igualdad EXPRESION {$$ = $1 == $3} |
-            EXPRESION TK_mayor EXPRESION {$$ = $1 > $3} |
-            EXPRESION TK_menor EXPRESION {$$ = $1 < $3} |
-            EXPRESION TK_mayorIgual EXPRESION {$$ = $1 >= $3} |
-            EXPRESION TK_menorIgual EXPRESION {$$ = $1 <= $3} ;
+            EXPRESION TK_igualdad EXPRESION |
+            EXPRESION TK_mayor EXPRESION |
+            EXPRESION TK_menor EXPRESION |
+            EXPRESION TK_mayorIgual EXPRESION |
+            EXPRESION TK_menorIgual EXPRESION ;
 
-LOGICAS :
-            EXPRESION TK_and EXPRESION {$$ = $1 && $3} |
-            EXPRESION TK_or EXPRESION {$$ = $1 || $3} |
-            TK_not EXPRESION {$$ = !$2} ;
+LOGICOS :
+            EXPRESION TK_and EXPRESION |
+            EXPRESION TK_or EXPRESION |
+            TK_not EXPRESION ;
+
+TIPO : 
+        TK_entero {$$ = Tipo.ENTERO} | 
+        TK_double {$$ = Tipo.DOUBLE} |
+        TK_string {$$ = Tipo.CADENA} ;
