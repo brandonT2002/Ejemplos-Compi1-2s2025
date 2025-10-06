@@ -64,8 +64,10 @@ STRING      \"({CONTENT}*)\"
     const { Tipo } = require('../Clases/Utilidades/Tipo');
     // Expresiones
     const { Primitivo } = require('../Clases/Expresiones/Primitivo');
+    const { AccesoID } = require('../Clases/Expresiones/AccesoID');
     // Instrucciones
     const { DeclaracionID } = require('../Clases/Instrucciones/DeclaracionID');
+    const { Imprimir } = require('../Clases/Instrucciones/Imprimir');
 %}
 
 // Precedencia de operadores
@@ -90,21 +92,21 @@ INSTRUCCIONES : INSTRUCCIONES INSTRUCCION {$$.push($2)} |
 
 INSTRUCCION :
             DECLARACION_VAR {$$ = $1} |
-            IMPRIMIR        |
-            error             {errores.push(new Error(this._$.first_line, this._$.first_column + 1, TipoError.SINTACTICO, `No se esperaba «${yytext}»`))} ;
+            IMPRIMIR        {$$ = $1} |
+            error           {errores.push(new Error(this._$.first_line, this._$.first_column + 1, TipoError.SINTACTICO, `No se esperaba «${yytext}»`))} ;
 
 DECLARACION_VAR :
             TIPO TK_id TK_con TK_valor EXPRESION TK_puntoComa {$$ = new DeclaracionID(@1.first_line, @1.first_column, $2, $1, $5)} ;
 
 IMPRIMIR :
-            TK_imprimir EXPRESION TK_puntoComa ;
+            TK_imprimir EXPRESION TK_puntoComa {$$ = new Imprimir(@1.first_line, @1.first_column, $2)} ;
 
 EXPRESION : 
             ARITMETICOS  |
             RELACIONALES |
             LOGICOS      |
             TK_parAbre EXPRESION TK_parCierra |
-            TK_id     {$$ = new Primitivo()} |
+            TK_id     {$$ = new AccesoID(@1.first_line, @1.first_column, $1              )} |
             TK_int    {$$ = new Primitivo(@1.first_line, @1.first_column, $1, Tipo.ENTERO)} |
             TK_double {$$ = new Primitivo(@1.first_line, @1.first_column, $1, Tipo.DOUBLE)} |
             TK_string {$$ = new Primitivo(@1.first_line, @1.first_column, $1, Tipo.CADENA)} ;
