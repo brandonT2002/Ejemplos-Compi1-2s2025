@@ -24,14 +24,15 @@ STRING      \"({CONTENT}*)\"
 // Reservadas
 "entero"                { return 'TK_entero'  }
 "double"                { return 'TK_double'  }
+"cadena"                { return 'TK_cadena'  }
 "con"                   { return 'TK_con'     }
 "valor"                 { return 'TK_valor'   }
 "imprimir"              { return 'TK_imprimir'}
-"if"                    { return 'TK_if'      }
-"else"                  { return 'TK_else'    }
+"si"                    { return 'TK_if'      }
+"o"                     { return 'TK_else'    }
 // Valores
 {ID}                    { return 'TK_id'     }
-{STRING}                { return 'TK_string' }
+{STRING}                { yytext = yytext.slice(1, yyleng - 1); return 'TK_string' }
 {DOUBLE}                { return 'TK_double' }
 {INTEGER}               { return 'TK_int'    }
 // Símbolos
@@ -65,9 +66,14 @@ STRING      \"({CONTENT}*)\"
     // Expresiones
     const { Primitivo } = require('../Clases/Expresiones/Primitivo');
     const { AccesoID } = require('../Clases/Expresiones/AccesoID');
+    const { Aritmetico } = require('../Clases/Expresiones/Aritmetico');
+    const { Relacional } = require('../Clases/Expresiones/Relacional');
+    const { Logico } = require('../Clases/Expresiones/Logico');
     // Instrucciones
     const { DeclaracionID } = require('../Clases/Instrucciones/DeclaracionID');
+    const { Reasignacion } = require('../Clases/Instrucciones/Reasignacion');
     const { Imprimir } = require('../Clases/Instrucciones/Imprimir');
+    const { Si } = require('../Clases/Instrucciones/Si');
 %}
 
 // Precedencia de operadores
@@ -92,44 +98,53 @@ INSTRUCCIONES : INSTRUCCIONES INSTRUCCION {$$.push($2)} |
 
 INSTRUCCION :
             DECLARACION_VAR {$$ = $1} |
+            REASIGNACION    {$$ = $1} |
             IMPRIMIR        {$$ = $1} |
+            CONDICIONAL_SI  {$$ = $1} |
             error           {errores.push(new Error(this._$.first_line, this._$.first_column + 1, TipoError.SINTACTICO, `No se esperaba «${yytext}»`))} ;
 
 DECLARACION_VAR :
             TIPO TK_id TK_con TK_valor EXPRESION TK_puntoComa {$$ = new DeclaracionID(@1.first_line, @1.first_column, $2, $1, $5)} ;
 
+REASIGNACION : TK_id TK_asignacion EXPRESION TK_puntoComa {$$ = new Reasignacion(@1.first_line, @1.first_column, $1, $3)} ;
+
 IMPRIMIR :
             TK_imprimir EXPRESION TK_puntoComa {$$ = new Imprimir(@1.first_line, @1.first_column, $2)} ;
 
+// Instrucciones
+// === CONDICIONAL SI ===
+CONDICIONAL_SI : TK_if TK_parAbre EXPRESION TK_parCierra TK_llaveAbre INSTRUCCIONES TK_llaveCierra {$$ = new Si(@1.first_line, @1.first_column, $3, $6)} ;
+
+// Expresiones
 EXPRESION : 
-            ARITMETICOS  |
-            RELACIONALES |
-            LOGICOS      |
-            TK_parAbre EXPRESION TK_parCierra |
+            ARITMETICOS  {$$ = $1} |
+            RELACIONALES {$$ = $1} |
+            LOGICOS      {$$ = $1} |
+            TK_parAbre EXPRESION TK_parCierra {$$ = $2} |
             TK_id     {$$ = new AccesoID(@1.first_line, @1.first_column, $1              )} |
             TK_int    {$$ = new Primitivo(@1.first_line, @1.first_column, $1, Tipo.ENTERO)} |
             TK_double {$$ = new Primitivo(@1.first_line, @1.first_column, $1, Tipo.DOUBLE)} |
             TK_string {$$ = new Primitivo(@1.first_line, @1.first_column, $1, Tipo.CADENA)} ;
 
 ARITMETICOS : 
-            EXPRESION TK_mas EXPRESION |
-            EXPRESION TK_menos EXPRESION |
-            EXPRESION TK_multiplicacion EXPRESION |
-            EXPRESION TK_division EXPRESION ;
+            EXPRESION TK_mas EXPRESION            {$$ = new Aritmetico(@1.first_line, @1.first_column, $1, $2, $3)} |
+            EXPRESION TK_menos EXPRESION          {$$ = new Aritmetico(@1.first_line, @1.first_column, $1, $2, $3)} |
+            EXPRESION TK_multiplicacion EXPRESION {$$ = new Aritmetico(@1.first_line, @1.first_column, $1, $2, $3)} |
+            EXPRESION TK_division EXPRESION       {$$ = new Aritmetico(@1.first_line, @1.first_column, $1, $2, $3)} ;
 
 RELACIONALES :
-            EXPRESION TK_igualdad EXPRESION |
-            EXPRESION TK_mayor EXPRESION |
-            EXPRESION TK_menor EXPRESION |
-            EXPRESION TK_mayorIgual EXPRESION |
-            EXPRESION TK_menorIgual EXPRESION ;
+            EXPRESION TK_igualdad EXPRESION   {$$ = new Relacional(@1.first_line, @1.first_column, $1, $2, $3)} |
+            EXPRESION TK_mayor EXPRESION      {$$ = new Relacional(@1.first_line, @1.first_column, $1, $2, $3)} |
+            EXPRESION TK_menor EXPRESION      {$$ = new Relacional(@1.first_line, @1.first_column, $1, $2, $3)} |
+            EXPRESION TK_mayorIgual EXPRESION {$$ = new Relacional(@1.first_line, @1.first_column, $1, $2, $3)} |
+            EXPRESION TK_menorIgual EXPRESION {$$ = new Relacional(@1.first_line, @1.first_column, $1, $2, $3)} ;
 
 LOGICOS :
-            EXPRESION TK_and EXPRESION |
-            EXPRESION TK_or EXPRESION |
-            TK_not EXPRESION ;
+            EXPRESION TK_and EXPRESION {$$ = new Logico(@1.first_line, @1.first_column, $1, $2, $3)}|
+            EXPRESION TK_or EXPRESION  {$$ = new Logico(@1.first_line, @1.first_column, $1, $2, $3)}|
+            TK_not EXPRESION           {$$ = new Logico(@1.first_line, @1.first_column, undefined, $1, $2)};
 
 TIPO : 
         TK_entero {$$ = Tipo.ENTERO} | 
         TK_double {$$ = Tipo.DOUBLE} |
-        TK_string {$$ = Tipo.CADENA} ;
+        TK_cadena {$$ = Tipo.CADENA} ;

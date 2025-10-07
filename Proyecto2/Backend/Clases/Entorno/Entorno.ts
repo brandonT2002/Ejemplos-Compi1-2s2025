@@ -34,6 +34,17 @@ export class Entorno {
         return null;
     }
 
+    // === Modificar Variables ===
+    public modificarVariable(id: string, valor: any) {
+        let entorno: Entorno | null = this;
+        while (entorno != null) {
+            if (entorno.ids.has(id)) {
+                entorno.ids.get(id)!.valor = valor;
+            }
+            entorno = entorno.anterior;
+        }
+    }
+
     public setPrint(print: string) {
         salidasConsola.push(print);
     }

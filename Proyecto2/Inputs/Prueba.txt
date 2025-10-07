@@ -1,3 +1,13 @@
-entero edad con valor 30 ;
-double Salario con valor 150.99 ;
-imprimir edad;
+entero edad con valor 30 + 20 ;
+double Salario con valor 10.5 ;
+cadena saludo con valor "Jefferson";
+imprimir edad + 10.5;
+imprimir "edad" - 10;
+imprimir "hola" == "mundo";
+imprimir !("hola" == "hola" && "hola" == "mundo");
+si ( edad > 18 ) { 
+    imprimir "es mayor de edad";
+    imprimir "hola " + saludo;
+    edad = 10;
+}
+imprimir "\tNueva edad:\n" + edad + "\nAdiós";
