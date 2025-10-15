@@ -3,5 +3,7 @@ export enum TipoExpresion {
     ARITMETICO,
     RELACIONAL,
     LOGICO,
-    ACCESO_ID
+    ACCESO_ID,
+    LLAMADA_FUNCION,
+    RETORNO
 }

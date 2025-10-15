@@ -6,5 +6,7 @@ export enum tipoInstruccion {
     SI,
     WHILE,
     PARA,
-    CREAR_OBJETOS
+    FUNCION,
+    CREAR_OBJETOS,
+    INCREMENTO
 }

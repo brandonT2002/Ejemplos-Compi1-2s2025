@@ -11,3 +11,22 @@ si ( edad > 18 ) {
     edad = 10;
 }
 imprimir "\tNueva edad:\n" + edad + "\nAdiós";
+
+entero x con valor 10;
+imprimir x;
+imprimir 10 > 5;
+imprimir x > 10;
+
+entero resultado con valor 0 ;
+funcion entero suma ( ) {
+    resultado = 30 + 20 ;
+    retornar resultado ;
+}
+
+resultado = ejecutar suma() ;
+
+imprimir "Resultado: " + resultado;
+
+entero i con valor 0 ;
+i ++
+imprimir i;
