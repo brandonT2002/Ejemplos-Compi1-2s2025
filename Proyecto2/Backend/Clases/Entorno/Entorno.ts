@@ -2,6 +2,8 @@ import { Funcion } from "../Instrucciones/Funcion";
 import { salidasConsola } from "../Utilidades/Salida";
 import { Tipo } from "../Utilidades/Tipo";
 import { Simbolo } from "./Simbolo";
+import { SimboloTabla } from "./SimboloTabla";
+import { tablaSimbolos } from "./Tabla";
 
 export class Entorno {
     public ids: Map<string, Simbolo> = new Map<string, Simbolo>();
@@ -18,6 +20,7 @@ export class Entorno {
             entornoActual.ids.set(id, new Simbolo(valor, id, tipo));
             // console.log('Se guardo la variable ' + id + ' en el entorno ' + entornoActual.nombre);
             // Insertar a la tabla de simbolos
+            tablaSimbolos.agregarSimbolo(new SimboloTabla(linea, columna, true, true, tipo, id, entornoActual.nombre));
         }
         // Error semántico: La variable ya existe
     }
@@ -55,6 +58,7 @@ export class Entorno {
             entornoActual.funciones.set(id, funcion);
             // console.log('Se guardo la funcion ' + id + ' en el entorno ' + entornoActual.nombre);
             // Insertar a la tabla de simbolos
+            tablaSimbolos.agregarSimbolo(new SimboloTabla(funcion.linea, funcion.columna, true, true, funcion.tipo, id, entornoActual.nombre));
         }
         // Error semántico: La variable ya existe
     }
