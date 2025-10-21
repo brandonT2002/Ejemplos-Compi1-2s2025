@@ -5,22 +5,19 @@ import { tipoInstruccion } from "../Utilidades/TipoInstruccion";
 import { Bloque } from "./Bloque";
 
 export class Para extends Instruccion {
+    private bloque: Bloque;
     constructor(linea: number, columna: number, public inicio: Expresion, public condicion: Expresion, public incremento: Expresion, public instrucciones: Instruccion[]) { 
         super(linea, columna, tipoInstruccion.PARA);
+        this.bloque = new Bloque(linea, columna, instrucciones);
     }
 
     public ejecutar(entorno: Entorno) {
-        let entornoLocal = new Entorno(entorno, entorno.nombre + "_PARA");
-        let inicio = this.inicio.ejecutar(entorno);
-        if (inicio) {
-            let condicion = this.condicion.ejecutar(entorno);
-            if (condicion) {
-                let bloque = new Bloque(this.linea, this.columna, this.instrucciones);
-                if (bloque) {
-                    bloque.ejecutar(entornoLocal);
-                    this.incremento.ejecutar(entorno);
-                }
-            }
+        console.log("-> ENTRO AL PARA");
+        const entornoLocal = new Entorno(entorno, entorno.nombre + "_PARA");
+        let condicion = this.condicion.ejecutar(entorno);
+        console.log("Valor condicion PARA: " + condicion.valor);
+        if (condicion.valor) {
+            console.log("ENTRO AL PARA");
         }
     }
 }

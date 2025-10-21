@@ -26,7 +26,17 @@ funcion entero suma ( ) {
 resultado = ejecutar suma() ;
 
 imprimir "Resultado: " + resultado;
+imprimir resultado--;
 
 entero i con valor 0 ;
-i ++
 imprimir i;
+imprimir i++;
+imprimir i++;
+imprimir i++;
+imprimir i--;
+
+imprimir "=== CICLO ===";
+i = 0;
+para ( i = 0 ; i <= 10 ; i++ ) {
+    imprimir i;
+}

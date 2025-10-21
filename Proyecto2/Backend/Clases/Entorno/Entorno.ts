@@ -16,7 +16,7 @@ export class Entorno {
         if (!entornoActual.ids.has(id)) {
             // Guardar variable
             entornoActual.ids.set(id, new Simbolo(valor, id, tipo));
-            console.log('Se guardo la variable ' + id + ' en el entorno ' + entornoActual.nombre);
+            // console.log('Se guardo la variable ' + id + ' en el entorno ' + entornoActual.nombre);
             // Insertar a la tabla de simbolos
         }
         // Error semántico: La variable ya existe
@@ -27,7 +27,7 @@ export class Entorno {
         let entorno: Entorno | null = this;
         while (entorno != null) {
             if (entorno.ids.has(id)) {
-                console.log("Buscando variable " + id + " en el entorno " + entorno.nombre);
+                // console.log("Buscando variable " + id + " en el entorno " + entorno.nombre);
                 return entorno.ids.get(id)!
             }
             entorno = entorno.anterior;
@@ -53,7 +53,7 @@ export class Entorno {
         if (!entornoActual.funciones.has(id)) {
             // Guardar fucion
             entornoActual.funciones.set(id, funcion);
-            console.log('Se guardo la funcion ' + id + ' en el entorno ' + entornoActual.nombre);
+            // console.log('Se guardo la funcion ' + id + ' en el entorno ' + entornoActual.nombre);
             // Insertar a la tabla de simbolos
         }
         // Error semántico: La variable ya existe

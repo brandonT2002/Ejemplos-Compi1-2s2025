@@ -40,6 +40,8 @@ STRING      \"({CONTENT}*)\"
 {DOUBLE}                { return 'TK_decimal' }
 {INTEGER}               { return 'TK_int'    }
 // Símbolos
+'++'                    { return 'TK_incremento'      }
+'--'                    { return 'TK_decremento'      }
 '+'                     { return 'TK_mas'             }
 '-'                     { return 'TK_menos'           }
 '*'                     { return 'TK_multiplicacion'  }
@@ -82,7 +84,7 @@ STRING      \"({CONTENT}*)\"
     const { Si } = require('../Clases/Instrucciones/Si');
     const { Funcion } = require('../Clases/Instrucciones/Funcion');
     const { Para } = require('../Clases/Instrucciones/Para');
-    const { Incremento } = require('../Clases/Instrucciones/Incremento');
+    const { IncDec } = require('../Clases/Instrucciones/IncDec');
 %}
 
 // Precedencia de operadores
@@ -122,6 +124,10 @@ DECLARACION_VAR :
 
 REASIGNACION : TK_id TK_asignacion EXPRESION {$$ = new Reasignacion(@1.first_line, @1.first_column, $1, $3)} ;
 
+INC_DEC :
+        TK_id TK_incremento {$$ = new IncDec(@1.first_line, @1.first_column, $1, $2)} |
+        TK_id TK_decremento {$$ = new IncDec(@1.first_line, @1.first_column, $1, $2)} ;
+
 IMPRIMIR :
             TK_imprimir EXPRESION {$$ = new Imprimir(@1.first_line, @1.first_column, $2)} ;
 
@@ -130,7 +136,7 @@ IMPRIMIR :
 CONDICIONAL_SI : TK_if TK_parAbre EXPRESION TK_parCierra TK_llaveAbre INSTRUCCIONES TK_llaveCierra {$$ = new Si(@1.first_line, @1.first_column, $3, $6)} ;
 
 // === CICLO PARA ===
-CICLO_PARA : TK_para TK_parAbre REASIGNACION TK_puntoComa EXPRESION TK_puntoComa EXPRESION TK_parCierra TK_llaveAbre INSTRUCCIONES TK_llaveCierra ;
+CICLO_PARA : TK_para TK_parAbre REASIGNACION TK_puntoComa EXPRESION TK_puntoComa INC_DEC TK_parCierra TK_llaveAbre INSTRUCCIONES TK_llaveCierra {$$ = new Para(@1.first_line, @1.first_column, $3, $5, $7, $10)} ;
 
 // === Funciones ===
 FUNCION : TK_funcion TIPO TK_id TK_parAbre TK_parCierra TK_llaveAbre INSTRUCCIONES TK_llaveCierra {$$ = new Funcion(@1.first_line, @1.first_column, $3, $2, $7)} ;
@@ -140,6 +146,7 @@ EXPRESION :
             ARITMETICOS  {$$ = $1} |
             RELACIONALES {$$ = $1} |
             LOGICOS      {$$ = $1} |
+            INC_DEC      {$$ = $1} |
             CASTEO                 |
             LLAMADA_FUNCION           {$$ = $1} |
             TK_id      {$$ = new AccesoID(@1.first_line, @1.first_column, $1              )} |
