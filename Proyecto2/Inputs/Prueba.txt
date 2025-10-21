@@ -37,6 +37,15 @@ imprimir i--;
 
 imprimir "=== CICLO ===";
 i = 0;
-para ( i = 0 ; i <= 10 ; i++ ) {
+para ( i = 10 ; i > 0 ; i-- ) {
+    si (i == 5) {
+        imprimir "Hola mundo";
+    }
     imprimir i;
+}
+
+imprimir "=== TABLA DEL 7 ===";
+i = 0;
+para ( i = 10 ; i > 0 ; i-- ) {
+    imprimir i + 7;
 }
