@@ -58,7 +58,7 @@ export class Entorno {
             entornoActual.funciones.set(id, funcion);
             // console.log('Se guardo la funcion ' + id + ' en el entorno ' + entornoActual.nombre);
             // Insertar a la tabla de simbolos
-            tablaSimbolos.agregarSimbolo(new SimboloTabla(funcion.linea, funcion.columna, true, true, funcion.tipo, id, entornoActual.nombre));
+            tablaSimbolos.agregarSimbolo(new SimboloTabla(funcion.linea, funcion.columna, false, false, funcion.tipo, id, entornoActual.nombre));
         }
         // Error semántico: La variable ya existe
     }

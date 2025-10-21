@@ -6,9 +6,9 @@ class Tabla {
         this.simbolos = [];
     }
 
-    public validarSimbolo(simbolo: SimboloTabla) {
-        for (const i of this.simbolos) {
-            if (i.hash() == simbolo.hash()) {
+    public validarSimbolo(simbolo_: SimboloTabla) {
+        for (const simbolo of this.simbolos) {
+            if (simbolo.hash() == simbolo_.hash()) {
                 return false;
             }
         }
